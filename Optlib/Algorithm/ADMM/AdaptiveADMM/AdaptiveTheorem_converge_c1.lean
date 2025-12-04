@@ -925,11 +925,6 @@ lemma sqnrm_A₂e₂_subseq_converge_zero [IsOrderedMonoid ℝ][Condition_C1 adm
       Tendsto (fun n => ‖A₂ (e₂ (φ n))‖^2) atTop (𝓝 0) := by
    rw [← zero_pow]; apply Filter.Tendsto.pow ; apply nrm_A₂e₂_subseq_converge_zero; linarith
 
--- ρₙ (φ n) * ‖A₂ (e₂ (φ n))‖^2 → 0
--- lemma const_sqnrm_A₂e₂_subseq_converge_zero [IsOrderedMonoid ℝ][Condition_C1 admm admm_kkt][Setting E₁ E₂ F admm (admm_kkt₁ fullrank₁ fullrank₂ (admm_kkt := admm_kkt) (_s := ⟨⟩))]:
---       Tendsto (fun n => ρₙ (φ n) * ‖A₂ (e₂ (φ n))‖^2) atTop (𝓝 0) := by
---    rw [← mul_zero]
---    apply Filter.Tendsto.const_mul (ρₙ (φ n)) (sqnrm_A₂e₂_subseq_converge_zero fullrank₁ fullrank₂)
 
 -- A₁ (e₁ (φ n)) + A₂ (e₂ (φ n)) → 0
 lemma A₁e₁_A₂e₂_subseq_converge_zero [IsOrderedMonoid ℝ][Condition_C1 admm admm_kkt][Setting E₁ E₂ F admm (admm_kkt₁ fullrank₁ fullrank₂ (admm_kkt := admm_kkt) (_s := ⟨⟩))]:

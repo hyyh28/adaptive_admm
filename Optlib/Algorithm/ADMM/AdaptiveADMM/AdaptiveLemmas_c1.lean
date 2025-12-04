@@ -1499,16 +1499,10 @@ lemma HWY_Lemma_3_2 [Setting E₁ E₂ F admm admm_kkt] :
   --  ___.mpr == ___.2
 
 
--- Adaptive Lyapunov function (HWY style)
--- 对应HWY论文公式(33)左边的项
 
-
--- 辅助引理：T = 2 - (1/2)(1 + τ - τ²) 的定义和性质
--- HWY论文公式(32)
 
 lemma T_minus_tau_positive [Setting E₁ E₂ F admm admm_kkt]: T_HWY - τ ≥ 3/8 := by
    simp only [T_HWY]
-   -- T - τ = 2 - 1/2 - τ/2 + τ²/2 - τ = (1/2)(τ² - 3τ + 3) = (1/2)((τ - 3/2)² + 3/4) ≥ 3/8
    have h : 2 - 1/2 * (1 + τ - τ^2) - τ = 1/2 * (τ^2 - 3*τ + 3) := by ring
    rw [h]
    have h2 : τ^2 - 3*τ + 3 = (τ - 3/2)^2 + 3/4 := by ring
@@ -1516,8 +1510,6 @@ lemma T_minus_tau_positive [Setting E₁ E₂ F admm admm_kkt]: T_HWY - τ ≥ 3
    have h3 : (τ - 3/2)^2 ≥ 0 := sq_nonneg _
    linarith
 
--- 辅助引理：Cauchy-Schwarz风格的交叉项估计
--- HWY论文公式(35)
 lemma HWY_eq35 [Setting E₁ E₂ F admm admm_kkt] :
   ∀ n : ℕ+,
     2 * ρₙ n * ρₙ (n+1) * τ * (1 - τ) * ⟪ (A₁ (x₁ n) + A₂ (x₂ n) - b), (A₂ (x₂ n - x₂ (n+1))) ⟫
@@ -1615,8 +1607,6 @@ lemma HWY_eq35 [Setting E₁ E₂ F admm admm_kkt] :
   rw [← neg_le_neg_iff] at this
   linarith
 
-theorem thm1 (a d c : ℝ) (ha : a > c) : a + d > c + d := by
-  linarith
 lemma eq0 [Setting E₁ E₂ F admm admm_kkt] : ∀ n : ℕ+,
   ‖A₂ (x₂ (n) - x₂ (n+1))‖^2 = ‖A₂ (x₂ (n+1) - x₂ (n))‖^2 := by
     intro n
@@ -1627,7 +1617,6 @@ lemma eq0 [Setting E₁ E₂ F admm admm_kkt] : ∀ n : ℕ+,
     rw [h]
     rw [h2]
     rw [norm_neg]
-
 
 lemma eq1 [Setting E₁ E₂ F admm admm_kkt] : ∀ n : ℕ+,
  ‖ey n‖^2 + τ * (ρₙ (n+1))^2 * ‖A₂ (e₂ n)‖^2 + τ * (T_HWY - τ) * ρₙ (n+1)^2 * ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖ ^ 2≥
@@ -1884,8 +1873,6 @@ lemma ey_change_with_rho [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
    intro n
    ring
 
--- HWY论文第4节：收敛性分析
--- =================================================================
 def η_k [Setting E₁ E₂ F admm admm_kkt] : ℕ → ℝ :=
   fun n => if n = 0 then 0  -- 显式处理初始情况
            else if ρₙ (n+1) > ρₙ n then
