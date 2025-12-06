@@ -552,9 +552,6 @@ lemma eta_square_summable' [Condition_C1 admm admm_kkt] [IsOrderedMonoid ℝ] :
        ≤ ∑' (n : ℕ), η_k n ^ 2 := this
      _ ≤ C := hC
 
-
-
-
 lemma g1_summable_0_sum' [Condition_C1 admm admm_kkt] [IsOrderedMonoid ℝ] :
    ∃ C >0 ,∀ n : ℕ,
    ∑ i ∈ Finset.range n, (η_k (i+1))^2 ≤ C := by
@@ -696,7 +693,7 @@ lemma Summable_1 [Condition_C1 admm admm_kkt] [IsOrderedMonoid ℝ]:
    exact Summable_1'
    exact h1_summable
 
-lemma converge_zero [Condition_C1 admm admm_kkt] [IsOrderedMonoid ℝ]: Tendsto (fun n => (1/3) * (1 + τ - τ^2) * τ * ρₙ (n+1)^2 * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ (n) - x₂ (n+1))‖^2)) atTop (nhds 0) := by
+lemma converge_zero_1 [Condition_C1 admm admm_kkt] [IsOrderedMonoid ℝ]: Tendsto (fun n => (1/3) * (1 + τ - τ^2) * τ * ρₙ (n+1)^2 * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ (n) - x₂ (n+1))‖^2)) atTop (nhds 0) := by
   apply Summable.tendsto_atTop_zero Summable_1
 
 -- 主要收敛定理：残差项趋于零
@@ -722,7 +719,7 @@ theorem HWY_Convergence_1 [Condition_C1 admm admm_kkt] [IsOrderedMonoid ℝ]:
       congr 1
       simp [sub_eq_add_neg, add_comm]
    -- 从converge_zero得到的结论
-   have h_conv := converge_zero
+   have h_conv := converge_zero_1
    -- 利用夹逼定理
    have h_squeeze : ∀ n, (1/3) * (1 + τ - τ^2) * τ * BL^2 * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ (n+1) - x₂ n)‖^2)
                         ≤ (1/3) * (1 + τ - τ^2) * τ * ρₙ (n+1)^2 * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ (n) - x₂ (n+1))‖^2) := by

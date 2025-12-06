@@ -540,7 +540,7 @@ lemma Summable_2 [Condition_C2 admm admm_kkt] [IsOrderedMonoid ℝ]:
    exact Summable_2'
    exact h2_summable
 
-lemma converge_zero [Condition_C2 admm admm_kkt] [IsOrderedMonoid ℝ]: Tendsto (fun n => (1/3) * (1 + τ - τ^2) * τ * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ (n) - x₂ (n+1))‖^2)) atTop (nhds 0) := by
+lemma converge_zero_2 [Condition_C2 admm admm_kkt] [IsOrderedMonoid ℝ]: Tendsto (fun n => (1/3) * (1 + τ - τ^2) * τ * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ (n) - x₂ (n+1))‖^2)) atTop (nhds 0) := by
   apply Summable.tendsto_atTop_zero Summable_2
 
 lemma norm_symm [Condition_C2 admm admm_kkt] [IsOrderedMonoid ℝ] : ∀ n : ℕ, ‖A₂ (x₂ (n) - x₂ (n+1))‖ = ‖A₂ (x₂ (n+1) - x₂ n)‖ := by
@@ -562,7 +562,7 @@ theorem HWY_Convergence_2 [Condition_C2 admm admm_kkt] [IsOrderedMonoid ℝ]:
         linarith
         linarith
         linarith
-    have h_lim := converge_zero (admm := admm) (admm_kkt := admm_kkt)
+    have h_lim := converge_zero_2 (admm := admm) (admm_kkt := admm_kkt)
     have h_congr : ∀ n, (1/3) * (1 + τ - τ^2) * τ * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2) =
                         (1/3) * (1 + τ - τ^2) * τ * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ (n+1) - x₂ n)‖^2) := by
       intro n

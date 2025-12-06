@@ -3,8 +3,8 @@
 ## 概述
 
 本框架提供了自适应ADMM算法的完整形式化，支持：
-- **C1和C2条件的完整形式化**：分别处理参数增长和减小的情况
-- **Strategy1收敛性证明**：验证特定自适应策略的收敛性
+- **C1和C2条件的完整形式化**：分别处理参数增长和减小的情况，包括完整的收敛定理
+- **Strategy3收敛性证明**：验证特定自适应策略的收敛性
 - **LLM代码生成接口**：允许LLM搜索论文并自动生成符合框架的Lean4代码
 
 ## 文件结构
@@ -33,13 +33,12 @@ AdaptiveADMM/
 │   ├── AdaptiveCondition2.lean          # C2条件定义和相关引理
 │   │   ├── Condition_C2类定义
 │   │   ├── θ_k序列定义
-│   │   ├── h2函数（基于g2，待实现）
+│   │   ├── h2函数（基于g2）
 │   │   └── C2相关的收敛引理
-│   └── AdaptiveTheorem_converge_c2.lean # C2收敛定理（待实现）
+│   └── AdaptiveTheorem_converge_c2.lean # C2收敛定理 ✅
 │
 ├── Strategies/
-│   ├── Strategy1_Convergence.lean      # Strategy1收敛性证明
-│   └── Strategy_Template.lean          # 策略模板（供LLM使用）
+│   └── Strategy3_Convergence.lean      # Strategy3收敛性证明 ✅
 │
 ├── LLM_Interface/
 │   ├── LLM_CodeGeneration.lean         # LLM代码生成接口
@@ -89,7 +88,7 @@ g2 n = 1 / ρₙ n² * ‖ey n‖² + τ * ‖A₂ (e₂ n)‖²
   h1 n = -g1(n+1) + (1 + (η_k n)²) * g1 n
   ```
   
-- **h2**: 用于C2条件的递推关系（待实现）
+- **h2**: 用于C2条件的递推关系
   ```lean
   h2 n = -g2(n+1) + (1 + (θ_k n)²) * g2 n
   ```
@@ -115,8 +114,25 @@ g2 n = 1 / ρₙ n² * ‖ey n‖² + τ * ‖A₂ (e₂ n)‖²
   - `Σ θₖ² < ∞` (θ平方和有限)
   - `∏(1 + θₖ²) < ∞` (乘积有界)
 - **Lyapunov函数**: 使用 `g2`
-- **递推关系**: 使用 `h2`（待实现）
+- **递推关系**: 使用 `h2`
 - **适用场景**: 当 `ρₙ(n+1) ≤ ρₙ(n)` 时
+
+## 已实现的策略
+
+### Strategy3
+
+Strategy3 是一个灵活的自适应参数更新策略，支持参数增长、减小或保持不变：
+
+**定义** (`Strategies/Strategy3_Convergence.lean`):
+- 参数更新规则：`ρ_{k+1} = ρ_k * (1 + τ_k)` 或 `ρ_{k+1} = ρ_k / (1 + τ_k)` 或 `ρ_{k+1} = ρ_k`
+- 其中 `τ_k` 是一个非负可和序列
+- 满足 C1 条件（参数增长情况）
+- 已完整证明收敛性
+
+**特点**：
+- 支持参数的双向调整（增长或减小）
+- 通过可和序列 `τ_k` 控制调整幅度
+- 完整的收敛性证明
 
 ## 快速开始
 
@@ -138,12 +154,12 @@ g2 n = 1 / ρₙ n² * ‖ey n‖² + τ * ‖A₂ (e₂ n)‖²
 #### C2条件（AdaptiveCondition2.lean）
 - `Condition_C2`: C2条件类
 - `θ_k`: 控制序列
-- `h2`: 递推关系（待实现）
-- C2相关的收敛引理（待完善）
+- `h2`: 递推关系
+- C2相关的收敛引理
 
 ### 2. 形式化新策略
 
-使用 `Strategies/Strategy_Template.lean` 作为模板：
+参考 `Strategies/Strategy3_Convergence.lean` 作为示例：
 
 ```lean
 -- 1. 定义策略类
@@ -185,48 +201,22 @@ if validate_consistency desc code then
 
 ## 当前状态
 
-### ✅ 已完成
-
-- [x] ADMM基础定义 (`AdaptiveScheme.lean`)
-- [x] 共享引理和定义 (`AdaptiveLemmas.lean`)
-  - [x] `g1` 和 `g2` 的定义
-  - [x] `Setting` 类
-  - [x] 基础引理（u_inthesubgradient, v_inthesubgradient等）
-- [x] C1条件的完整形式化 (`AdaptiveCondition1.lean`)
-  - [x] `Condition_C1` 类定义
-  - [x] `η_k` 序列定义
-  - [x] `h1` 函数定义
-  - [x] C1相关的收敛引理
-- [x] C1收敛定理 (`AdaptiveTheorem_converge_c1.lean`)
-- [x] C2条件的基础定义 (`AdaptiveCondition2.lean`)
-  - [x] `Condition_C2` 类定义
-  - [x] `θ_k` 序列定义
-- [x] Strategy1收敛性证明框架
-- [x] LLM代码生成接口
-- [x] 策略模板
-- [x] 框架设计文档
 
 ### 🚧 进行中
 
-- [ ] C2条件的完整实现
-  - [ ] `h2` 函数的实现
-  - [ ] C2相关的收敛引理
-  - [ ] C2收敛定理 (`AdaptiveTheorem_converge_c2.lean`)
-- [ ] Strategy1的完整证明
-- [ ] Strategy2的实现
+- [ ] 更多策略的收敛性证明（）
 
 ### 📋 待实现
 
-- [ ] C2相关的有界性引理
 - [ ] `Strategy_Validator.lean`
-- [ ] 更多策略的收敛性证明
+- [ ] 策略模板文档（供新策略参考）
 
 ## 使用指南
 
 ### 对于研究人员
 
 1. **形式化新策略**：
-   - 复制 `Strategy_Template.lean`
+   - 参考 `Strategies/Strategy3_Convergence.lean` 作为示例
    - 填写策略定义
    - **关键**：确定使用 `g1`（C1，参数增长）还是 `g2`（C2，参数减小）
    - 证明满足相应的收敛条件
@@ -248,7 +238,7 @@ if validate_consistency desc code then
 
 2. **生成代码**：
    - 使用 `LLM_CodeGeneration.lean` 接口
-   - 遵循 `Strategy_Template.lean` 模板
+   - 参考 `Strategies/Strategy3_Convergence.lean` 作为示例
    - **根据策略类型自动选择**：
      - C1策略 → 使用 `g1` 和 `h1`
      - C2策略 → 使用 `g2` 和 `h2`
@@ -300,7 +290,7 @@ AdaptiveLemmas.lean (导入AdaptiveScheme)
     │
     └──→ AdaptiveCondition2.lean (导入AdaptiveLemmas)
             ↓
-        AdaptiveTheorem_converge_c2.lean (待实现)
+        AdaptiveTheorem_converge_c2.lean ✅
 ```
 
 ## 参考文献
@@ -311,7 +301,7 @@ AdaptiveLemmas.lean (导入AdaptiveScheme)
 
 ## 贡献指南
 
-1. 新策略应遵循 `Strategy_Template.lean` 的结构
+1. 新策略应参考 `Strategies/Strategy3_Convergence.lean` 的结构
 2. 所有证明应完整（避免使用 `sorry`）
 3. 添加适当的文档和注释
 4. 更新本README和相关文档

@@ -1863,6 +1863,7 @@ lemma HWY_thm4_1_ineq [Setting E₁ E₂ F admm admm_kkt] :T_HWY - τ >0 := by
 --    intro n
 --    ring
 
-
+lemma inSet {X : Type*} ( f : ℕ → X ) : ∀ n : ℕ , f n ∈ range f := by
+   intro n;use n
 
 end AdaptiveADMM_Convergence_Proof
