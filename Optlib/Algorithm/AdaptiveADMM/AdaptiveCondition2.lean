@@ -115,7 +115,7 @@ lemma rho_inv_square_ratio_bound [Setting E₁ E₂ F admm admm_kkt] (n : ℕ) :
 -- 3. 核心放缩引理 (对应论文公式 55)
 -- 目标是证明: g2(n+1) + (残差项) ≤ (1+θ²) * g2(n)
 -- 假设你已经引入了必要的库和前置定义
-lemma HWY_ineq_55_0 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+lemma HWY_ineq_55_0 [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
     1 / ρₙ (n+1)^2 * (‖ey (n+1)‖^2 + τ * ρₙ (n+1)^2 * ‖A₂ (e₂ (n+1))‖^2
       + τ * (T_HWY - τ) * ρₙ (n+1)^2 * ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖ ^ 2)
       ≤ 1 / ρₙ (n+1)^2 * (‖ey n‖^2 + τ * ρₙ (n+1)^2 * ‖A₂ (e₂ n)‖^2
@@ -126,7 +126,7 @@ lemma HWY_ineq_55_0 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : �
       gcongr
 
 
-lemma HWY_ineq_55_1 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+lemma HWY_ineq_55_1 [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
      1 / ρₙ (n+1)^2 * ‖ey (n+1)‖^2 + τ * ‖A₂ (e₂ (n+1))‖^2 + τ * (T_HWY - τ) * ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2
      ≤(ρₙ (n)^2 / ρₙ (n+1)^2) * 1 / ρₙ n^2 * ‖ey n‖^2 + τ * ‖A₂ (e₂ n)‖^2 + (ρₙ (n)^2 / ρₙ (n+1)^2) * τ * (T_HWY - τ) * ‖A₁ (x₁ n) + A₂ (x₂ n) - b‖^2 - (1/3) * (1 + τ - τ^2) * τ  * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2):= by
    intro n
@@ -144,7 +144,7 @@ lemma HWY_ineq_55_1 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : �
    ·field_simp
    ·field_simp
 
-lemma HWY_ineq_55_2 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+lemma HWY_ineq_55_2 [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
      1 / ρₙ (n+1)^2 * ‖ey (n+1)‖^2 + τ * ‖A₂ (e₂ (n+1))‖^2 + τ * (T_HWY - τ) * ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2
      ≤(1 + θ_k n^2) * 1 / ρₙ n^2 * ‖ey n‖^2 + (1 + θ_k n^2)* τ * ‖A₂ (e₂ n)‖^2 + (1 + θ_k n^2) * τ * (T_HWY - τ) * ‖A₁ (x₁ n) + A₂ (x₂ n) - b‖^2 - (1/3) * (1 + τ - τ^2) * τ  * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2):= by
       intro n
@@ -165,17 +165,33 @@ lemma HWY_ineq_55_2 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : �
          _ ≤ (1 + θ_k n^2) * 1 / ρₙ n^2 * ‖ey n‖^2 + (1 + θ_k n^2)* τ * ‖A₂ (e₂ n)‖^2 + (1 + θ_k n^2) * τ * (T_HWY - τ) * ‖A₁ (x₁ n) + A₂ (x₂ n) - b‖^2 - (1/3) * (1 + τ - τ^2) * τ  * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2) := by
             gcongr
             linarith
+            linarith [HWY_thm4_1_ineq]
 
 
-lemma HWY_ineq_55_3 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+lemma HWY_ineq_55_3 [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
      1 / ρₙ (n+1)^2 * ‖ey (n+1)‖^2 + τ * ‖A₂ (e₂ (n+1))‖^2 + τ * (T_HWY - τ) * ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2
      ≤(1 + θ_k n^2) * 1 / ρₙ n^2 * ‖ey n‖^2 + (1 + θ_k n^2)* τ * ‖A₂ (e₂ n)‖^2 + (1 + θ_k n^2) * τ * (T_HWY - τ) * ‖A₁ (x₁ n) + A₂ (x₂ n) - b‖^2 - (1/3) * (1 + τ - τ^2) * τ  * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2) := by
       intro n
-
       have := HWY_ineq_55_2 n
       linarith
 
-lemma HWY_ineq_55_4 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+lemma HWY_ineq_55_3' [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+     1 / ρₙ (n+1)^2 * ‖ey (n+1)‖^2 + τ * ‖A₂ (e₂ (n+1))‖^2 + τ * (T_HWY - τ) * ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2
+     ≤(1 + θ_k n^2) * 1 / ρₙ n^2 * ‖ey n‖^2 + (1 + θ_k n^2)* τ * ‖A₂ (e₂ n)‖^2 + (1 + θ_k n^2) * τ * (T_HWY - τ) * ‖A₁ (x₁ n) + A₂ (x₂ n) - b‖^2 := by
+      intro n
+      have h_thm := HWY_ineq_55_2 n
+      have h_nonneg : (1/3) * (1 + τ - τ^2) * τ  * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2) ≥ 0 := by
+        have h1:= admm.htau.1
+        have h2:=admm.htau_range
+        have h4:= mul_pos h1 h2
+        have h6:= sq_nonneg ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖
+        have h7:= sq_nonneg ‖A₂ (x₂ n - x₂ (n+1))‖
+        have h8:= add_nonneg h6 h7
+        have h9:= mul_nonneg (le_of_lt h4) h8
+        linarith
+      linarith
+
+lemma HWY_ineq_55_4 [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
      1 / ρₙ (n+1)^2 * ‖ey (n+1)‖^2 + τ * ‖A₂ (e₂ (n+1))‖^2 + τ * (T_HWY - τ) * ‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2
      ≤(1 + θ_k n^2) * (1 / ρₙ n^2 * ‖ey n‖^2 + τ * ‖A₂ (e₂ n)‖^2 +  τ * (T_HWY - τ) * ‖A₁ (x₁ n) + A₂ (x₂ n) - b‖^2) - (1/3) * (1 + τ - τ^2) * τ  * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2):= by
       intro n
@@ -186,7 +202,7 @@ lemma HWY_ineq_55_4 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : �
         ring_nf
         simp
 
-lemma HWY_ineq_56_0' [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+lemma HWY_ineq_56_0' [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
     g2 (n+1) ≤ (1 + θ_k n^2) * g2 n - (1/3) * (1 + τ - τ^2) * τ  * (‖A₁ (x₁ (n+1)) + A₂ (x₂ (n+1)) - b‖^2 + ‖A₂ (x₂ n - x₂ (n+1))‖^2):= by
       intro n
       have h_thm := HWY_ineq_55_4 n
@@ -194,7 +210,7 @@ lemma HWY_ineq_56_0' [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : 
       unfold g2
       exact h_thm
 
-lemma HWY_ineq_56_0 [Condition_C2 admm admm_kkt][IsOrderedMonoid ℝ]: ∀ n : ℕ+,
+lemma HWY_ineq_56_0 [Setting E₁ E₂ F admm admm_kkt]: ∀ n : ℕ+,
     g2 (n+1) ≤ (1 + θ_k n^2) * g2 n:= by
       intro n
       have h_thm := HWY_ineq_56_0' n
