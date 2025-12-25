@@ -3,7 +3,7 @@
 build/
 
 # Lean package manager
-lake-manifest.json
+# lake-manifest.json
 
 # Editor files
 .lean/
