@@ -18,31 +18,25 @@ variable (admm : ADMM E₁ E₂ F)
 def tau_seq (c p : ℝ) (n : ℕ) : ℝ := c / Real.rpow ((n : ℝ) + 1) p
 
 theorem h_tau_summable (c p : ℝ) (hp : 1 < p) : Summable (tau_seq c p) := by
-  exact p_series_summable_template c p hp
+  simpa [tau_seq] using p_series_summable_template c p hp
 
-def r_ratio (r_norm_seq s_norm_seq : ℕ → ℝ) (eps : ℝ) (n : ℕ) : ℝ :=
-  r_norm_seq n / max (s_norm_seq n) eps
+def mu_seq (mu : ℝ) (tau : ℕ → ℝ) (n : ℕ) : ℝ := mu * (1 + tau n / 2)
 
-def s_ratio (r_norm_seq s_norm_seq : ℕ → ℝ) (eps : ℝ) (n : ℕ) : ℝ :=
-  s_norm_seq n / max (r_norm_seq n) eps
+def dir_seq (mu eps : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) (tau : ℕ → ℝ) (n : ℕ) : ℤ :=
+  if r_norm_seq n > mu_seq mu tau n * max (s_norm_seq n) eps then 1
+  else if s_norm_seq n > mu_seq mu tau n * max (r_norm_seq n) eps then -1 else 0
 
--- residual balancing: dir_seq n = 1 (mul), 0 (keep), -1 (div)
-def dir_seq (mu eps : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) (n : ℕ) : ℤ :=
-  if r_ratio r_norm_seq s_norm_seq eps n > mu then 1
-  else if s_ratio r_norm_seq s_norm_seq eps n > mu then -1 else 0
-
-lemma h_dir (mu eps : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) :
-    ∀ n, dir_seq mu eps r_norm_seq s_norm_seq n = 1 ∨
-         dir_seq mu eps r_norm_seq s_norm_seq n = 0 ∨
-         dir_seq mu eps r_norm_seq s_norm_seq n = -1 := by
+lemma h_dir (mu eps : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) (tau : ℕ → ℝ) :
+    ∀ n, dir_seq mu eps r_norm_seq s_norm_seq tau n = 1 ∨
+         dir_seq mu eps r_norm_seq s_norm_seq tau n = 0 ∨
+         dir_seq mu eps r_norm_seq s_norm_seq tau n = -1 := by
   intro n
-  by_cases h1 : r_ratio r_norm_seq s_norm_seq eps n > mu
+  by_cases h1 : r_norm_seq n > mu_seq mu tau n * max (s_norm_seq n) eps
   · simp [dir_seq, h1]
-  · by_cases h2 : s_ratio r_norm_seq s_norm_seq eps n > mu
+  · by_cases h2 : s_norm_seq n > mu_seq mu tau n * max (r_norm_seq n) eps
     · simp [dir_seq, h1, h2]
     · simp [dir_seq, h1, h2]
 
--- 基于 dir_seq 的三态更新
 def update_fun (tau : ℕ → ℝ) (dir : ℕ → ℤ) (n : ℕ) (rho : ℝ) : ℝ :=
   if dir n = (-1 : ℤ) then
     rho / (1 + tau n)
@@ -71,7 +65,7 @@ theorem auto_converges
     (hp : 1 < p)
     (r_norm_seq s_norm_seq : ℕ → ℝ)
     (h_tau_nonneg : ∀ n, 0 ≤ tau_seq c p n)
-    (h_rho : ∀ n, admm.ρₙ (n+1) = update_fun (tau_seq c p) (dir_seq mu eps r_norm_seq s_norm_seq) n (admm.ρₙ n))
+    (h_rho : ∀ n, admm.ρₙ (n+1) = update_fun (tau_seq c p) (dir_seq mu eps r_norm_seq s_norm_seq (tau_seq c p)) n (admm.ρₙ n))
     (fullrank₁ : Function.Injective admm.A₁)
     (fullrank₂ : Function.Injective admm.A₂) :
     ∃ x₁ x₂ y,
@@ -80,9 +74,9 @@ theorem auto_converges
   Tendsto admm.x₂ atTop (𝓝 x₂) ∧
   Tendsto admm.y atTop (𝓝 y) := by
   let tau := tau_seq c p
-  let dir := dir_seq mu eps r_norm_seq s_norm_seq
+  let dir := dir_seq mu eps r_norm_seq s_norm_seq tau
   have h_dir' : ∀ n, dir n = 1 ∨ dir n = 0 ∨ dir n = -1 := by
-    intro n; simpa [dir] using h_dir mu eps r_norm_seq s_norm_seq n
+    intro n; simpa [dir] using h_dir mu eps r_norm_seq s_norm_seq tau n
   let s : AdaptableStrategy (admm := admm) (admm_kkt := admm_kkt) :=
     { tau_seq := tau
       h_tau_nonneg := h_tau_nonneg

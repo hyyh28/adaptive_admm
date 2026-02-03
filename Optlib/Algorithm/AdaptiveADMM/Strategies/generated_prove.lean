@@ -20,25 +20,31 @@ def tau_seq (c p : ℝ) (n : ℕ) : ℝ := c / Real.rpow ((n : ℝ) + 1) p
 theorem h_tau_summable (c p : ℝ) (hp : 1 < p) : Summable (tau_seq c p) := by
   exact p_series_summable_template c p hp
 
-def r_ratio (r_norm_seq s_norm_seq : ℕ → ℝ) (eps : ℝ) (n : ℕ) : ℝ :=
-  r_norm_seq n / max (s_norm_seq n) eps
+def imbalance_ratio (r_norm_seq s_norm_seq : ℕ → ℝ) (eps : ℝ) (n : ℕ) : ℝ :=
+  if r_norm_seq n > eps ∧ s_norm_seq n > eps then
+    max (r_norm_seq n / s_norm_seq n) (s_norm_seq n / r_norm_seq n)
+  else
+    1
 
-def s_ratio (r_norm_seq s_norm_seq : ℕ → ℝ) (eps : ℝ) (n : ℕ) : ℝ :=
-  s_norm_seq n / max (r_norm_seq n) eps
+def kappa_seq (mu : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) (eps : ℝ) (n : ℕ) : ℝ :=
+  min (imbalance_ratio r_norm_seq s_norm_seq eps n / mu) 1.4
+
+def tau_adj_seq (c p mu : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) (eps : ℝ) (n : ℕ) : ℝ :=
+  tau_seq c p n * (1 + 0.4 * kappa_seq mu r_norm_seq s_norm_seq eps n)
 
 -- residual balancing: dir_seq n = 1 (mul), 0 (keep), -1 (div)
 def dir_seq (mu eps : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) (n : ℕ) : ℤ :=
-  if r_ratio r_norm_seq s_norm_seq eps n > mu then 1
-  else if s_ratio r_norm_seq s_norm_seq eps n > mu then -1 else 0
+  if r_norm_seq n > mu * max (s_norm_seq n) eps then 1
+  else if s_norm_seq n > mu * max (r_norm_seq n) eps then -1 else 0
 
 lemma h_dir (mu eps : ℝ) (r_norm_seq s_norm_seq : ℕ → ℝ) :
     ∀ n, dir_seq mu eps r_norm_seq s_norm_seq n = 1 ∨
          dir_seq mu eps r_norm_seq s_norm_seq n = 0 ∨
          dir_seq mu eps r_norm_seq s_norm_seq n = -1 := by
   intro n
-  by_cases h1 : r_ratio r_norm_seq s_norm_seq eps n > mu
+  by_cases h1 : r_norm_seq n > mu * max (s_norm_seq n) eps
   · simp [dir_seq, h1]
-  · by_cases h2 : s_ratio r_norm_seq s_norm_seq eps n > mu
+  · by_cases h2 : s_norm_seq n > mu * max (r_norm_seq n) eps
     · simp [dir_seq, h1, h2]
     · simp [dir_seq, h1, h2]
 
